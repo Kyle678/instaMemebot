@@ -44,6 +44,10 @@ Time remaining: 1:35:33.158757
 ```
 - Navigate to data/pictures/ to view any images that have been uploaded to Instagram
 
+# Extra information
+- Running Memebot.py while process is already active will restart Memebot
+- Memebot posts something when it is first run and then waits x amount of time before posting again
+
 <!-- LICENSE -->
 ## License
 
