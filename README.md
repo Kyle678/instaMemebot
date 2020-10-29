@@ -5,6 +5,7 @@
 * [Prerequisites](#Prerequisites)
 * [How to set up Memebot](#How-to-set-up-Memebot)
 * [Viewing information](#Viewing-information)
+* [Extra information](#Extra-information)
 
 # Description
 - This bot uses the requests module to grab posts from the hot page of a subreddit and posts the one with the highest number of upvotes to Instagram with the original title as the caption using the instabot library.
