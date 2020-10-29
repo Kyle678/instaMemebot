@@ -34,6 +34,7 @@ shortestTime=60**2*4 # 4 hours
 longestTime=60**2*6 # 6 hours
 ```
 5. Run Memebot.py
+   - Running this launches the task in the background so you're free to disconnect if using a remote terminal
 
 # Viewing information
 - After setting up and starting Memebot, run viewMemebot.py to see the time for the next post as well as a clock counting down
