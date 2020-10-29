@@ -28,7 +28,8 @@ hashtags=['hashtag1','hashtag2'] # leave empty if none are wanted
 subs=['subreddit1','subreddit2']
 ```
 4. Change shortestTime and LongestTime variables at the top of bot.py
-   - Time is in seconds and is set to 4-6 hours by default
+   - This is the time that the bot will wait before making another post
+     - Time is in seconds and is set to 4-6 hours by default
 ```python
 shortestTime=60**2*4 # 4 hours
 longestTime=60**2*6 # 6 hours
