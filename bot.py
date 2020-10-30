@@ -163,11 +163,9 @@ def setup():
         file.write(str(os.getpid()))
 
 def wait():
-    """Randomly wait before next post for 1.5-3 hours, time is doubled between 10 pm and 2 am"""
+    """Randomly wait before next post for between shortestTime to longestTime"""
     t=random.randrange(shortestTime,longestTime) # chooses random time between small and large
     now=datetime.datetime.now() # records time and date
-    if now.hour>21 or now.hour<2:
-        t=int(t*2)
     ne=now+datetime.timedelta(0,t) # calculates time until next post
     until=ne-now # gets time remaining
     with open(os.path.join('data','time.txt'),'w') as file:
