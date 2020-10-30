@@ -24,22 +24,28 @@ headers={'authority': 'gateway.reddit.com',
 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.111 Safari/537.36'
 }
 
-def getHot(subs):
+def getHot(subs,keywords):
     """Grabs a list of meme data from a subreddit randomly picked from list subs"""
     choice=random.choice(subs) # picks random sub
     hoturl=url.format(choice) # formats url to request from
     headers['path']=hoturl[hoturl.find('/desktopapi'):] # adds destination to headers
     r=requests.get(hoturl,headers=headers) # sends request to server with hot posts from subreddit
     js=json.loads(r.text) # converts response into json to use
+    return filterMemes(js,keywords)
+
+def filterMemes(memes,keywords):
+    """Filters out things like advertisements, videos, gifs, and any posts with specific keywords"""
+    if keywords[0]=='None':keywords=[]
+    noads=[x for x in memes.keys() if len(x)<12] # filters out ads
     memes=[]
-    notads=[x for x in js['posts'].keys() if len(x)<12] # filters out ads
-    for m in js['posts'].keys():
-        post=js['posts'][m]
-        if post['media'] and 'resolutions' in post['media'].keys() and post['id'] in notads and 'reddit' not in post['title'].lower(): # checks for required info and filters out posts about reddit
-            newmeme={'id':post['id'],'comments':post['numComments'],'upvotes':post['score'],'title':post['title']} # creates dict object for meme to post
-            urls=post['media']['resolutions'][0]['url'] # gets url for picture
-            newmeme['picurl']=urls[:urls.find('?')].replace('preview','i') # converts it to full size image url
-            if 'external' not in newmeme['picurl'] and ('jpg' in newmeme['picurl'] or 'jpeg' in newmeme['picurl'] or 'png' in newmeme['picurl']): # adds memes with type jpg or png
+    for meme in noads:
+        post=noads[meme]
+        if any(word in post['title'] for word in keywords): continue # filters out posts with any specified keyword in the title
+        if post['media'] and 'resolutions' in post['media'].keys: # checks for valid information
+            newmeme={'id':post['id'],'comments':post['numComments'],'upvotes':post['score'],'title':post['title']} # creates dict for new meme
+            url=post['media']['resolutions'][0]['url'].replace('preview','i')
+            newmeme['picurl']=url[:url.find('?')] # creates url for full size image of post
+            if 'external' not in newmeme['picurl'] and ('jpg' in newmeme['picurl'] or 'png' in newmeme['picurl']): # checks for valid extension
                 memes.append(newmeme)
     return memes
 
@@ -64,8 +70,8 @@ def downloadPicture(url):
 
 def generateHashtags(hashtags):
     """return list of hashtags in random order from list"""
-    if hashtags=='None':return ''
     s=''
+    if hashtags[0]=='None':return s
     choices=list(range(len(hashtags)))
     while choices:
         c=random.choice(choices) # chooses random hashtag to add
@@ -160,34 +166,35 @@ def loadConfig():
     username=config['userinfo']['username']
     password=config['userinfo']['password']
     pref=config['preferences']
+    keywords=pref['keywords'].split(',')
     shortestTime,longestTime=int(pref['shortestTime']),int(pref['longestTime'])
     hashtags,subs=pref['hashtags'].split(','),pref['subreddits'].split(',')
     if not subs:
         print('No subreddits are listed') # ends if subs is empty
         raise SystemExit
-    return  username,password,shortestTime,longestTime,hashtags,subs
+    return  username,password,keywords,shortestTime,longestTime,hashtags,subs
 
 def wait(shortestTime,longestTime):
     """Randomly wait before next post for between shortestTime to longestTime"""
-    t=random.randrange(shortestTime,longestTime) # chooses random time between small and large
+    t=random.randrange(shortestTime,longestTime) # chooses random time between shortestTime and longestTime
     now=datetime.datetime.now() # records time and date
-    ne=now+datetime.timedelta(0,t) # calculates time until next post
-    until=ne-now # gets time remaining
+    ne=now+datetime.timedelta(0,t) # calculates time of next post
+    until=ne-now # calculates time until next post
     with open(os.path.join('data','time.txt'),'w') as file:
         file.write(str(ne.time())) # writes time of next post to time.txt
     cleanUp()
     print('Next meme scheduled for '+str(ne))
-    while until.total_seconds()>0: # wait while time remaining is more than 0
+    while until.total_seconds()>0: # wait while time remaining is more than 0 seconds
         until=ne-datetime.datetime.now()
         time.sleep(.1)
 
 def main():
     """Main method"""
     setup()
-    username,password,shortestTime,longestTime,hashtags,subs=loadConfig()
     while True:
+        username,password,keywords,shortestTime,longestTime,hashtags,subs=loadConfig()
         try: # Catches any errors, writes them to errors.txt, and waits 1 minute before trying again
-            memes=getHot(subs)
+            memes=getHot(subs,keywords)
             meme=chooseMeme(memes)
             if not meme:continue # If no meme is returned, restarts process
             path,title=processMeme(meme)

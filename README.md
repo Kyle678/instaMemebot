@@ -20,6 +20,10 @@ Log in to raspberry via ssh or open terminal on raspberry pi
 git clone https://github.com/Kyle678/instaMemebot.git
 ```
 2. Open Memebot.ini to configure Memebot
+   - If on terminal
+   ```sh
+   nano Memebot.ini
+   ```
    - Under userinfo input your username and password
    ```sh
    [userinfo]
@@ -40,7 +44,7 @@ git clone https://github.com/Kyle678/instaMemebot.git
 3. Run Memebot.py
    - Running this launches the task in the background so you're free to disconnect if using a remote terminal
 4. Let Memebot run
-   - Memebot will run as long as you have a steady internet connection
+   - Memebot will continue running for as long as you let it
    - Run stop.py to stop Memebot
 
 # Viewing information
@@ -55,6 +59,7 @@ Time remaining: 1:35:33.158757
 - Running Memebot.py while process is already active will restart Memebot
 - Memebot posts something when it is first run and then waits x amount of time before posting again
 - Although named Memebot you can easily use it to post things like cute animals, food, the sky, etc.
+- Configuration variables will update each time a post is made so you can change them while Memebot runs
 
 <!-- LICENSE -->
 ## License
