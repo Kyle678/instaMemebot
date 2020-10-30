@@ -31,10 +31,11 @@ git clone https://github.com/Kyle678/instaMemebot.git
    username=username
    password=password
    ```
-   - Under preferences add hashtags to put in caption and subreddits to scrape pictures from
+   - Under preferences add keywords to filter posts with, hashtags to put in caption, and subreddits to scrape pictures from
    ```sh
    [preferences]
-   hashtags=hashtag1,hashtag2 # put None if hashtags aren't wanted
+   keywords=None # None if you choose not to filter any posts out
+   hashtags=hashtag1,hashtag2 # None if hashtags aren't wanted
    subreddits=subreddit1,subreddit2
    ```
    - Enter the minimum and maximum time you want the bot to pause for after each post in seconds. Default is 4-6 hours.
