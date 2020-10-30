@@ -64,6 +64,7 @@ def downloadPicture(url):
 
 def generateHashtags(hashtags):
     """return list of hashtags in random order from list"""
+    if hashtags=='None':return ''
     s=''
     choices=list(range(len(hashtags)))
     while choices:
