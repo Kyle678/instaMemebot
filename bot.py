@@ -36,16 +36,15 @@ def getHot(subs,keywords):
 def filterMemes(memes,keywords):
     """Filters out things like advertisements, videos, gifs, and any posts with specific keywords"""
     if keywords[0]=='None':keywords=[]
-    noads=[x for x in memes.keys() if len(x)<12] # filters out ads
-    memes=[]
-    for meme in noads:
-        post=noads[meme]
-        if any(word in post['title'].lower().split(' ') for word in keywords): continue # filters out posts with any specified keyword in the title
-        if post['media'] and 'resolutions' in post['media'].keys: # checks for valid information
-            newmeme={'id':post['id'],'comments':post['numComments'],'upvotes':post['score'],'title':post['title']} # creates dict for new meme
-            url=post['media']['resolutions'][0]['url'].replace('preview','i')
-            newmeme['picurl']=url[:url.find('?')] # creates url for full size image of post
-            if 'external' not in newmeme['picurl'] and ('jpg' in newmeme['picurl'] or 'png' in newmeme['picurl']): # checks for valid extension
+    notads=[x for x in memes['posts'].keys() if len(x)<12] # filters out ads
+    for m in js['posts'].keys():
+        post=js['posts'][m]
+        if any(word in post['title'].lower().split(' ') for word in keywords):continue
+        if post['media'] and 'resolutions' in post['media'].keys() and post['id'] in notads and 'reddit' not in post['title'].lower(): # checks for required info and filters out posts about reddit
+            newmeme={'id':post['id'],'comments':post['numComments'],'upvotes':post['score'],'title':post['title']} # creates dict object for meme to post
+            urls=post['media']['resolutions'][0]['url'] # gets url for picture
+            newmeme['picurl']=urls[:urls.find('?')].replace('preview','i') # converts it to full size image url
+            if 'external' not in newmeme['picurl'] and ('jpg' in newmeme['picurl'] or 'jpeg' in newmeme['picurl'] or 'png' in newmeme['picurl']): # adds memes with type jpg or png
                 memes.append(newmeme)
     return memes
 
