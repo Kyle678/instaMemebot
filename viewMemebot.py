@@ -41,7 +41,7 @@ def main():
             rh=h%12 if h%12!=0 else 12
             label='pm'if h>11 else 'am'
             until=then-now # calculates time remaining
-            while not isUploading() and pid in processes() and until.seconds>0:
+            while pid in processes() and until.seconds>0:
                 os.system('clear')
                 print(f'Next meme will upload at {rh}:%02d:%02d {label}'%(m,s))
                 now=datetime.datetime.now() # updates current time
@@ -53,6 +53,8 @@ def main():
                 print("Memebot doesn't seem to be running. Try restarting.")
                 raise SystemExit
             print('Waiting for upload . . .')
+            while not isUploading(): # waits for picture to download
+                time.sleep(1)
             while os.listdir('temp'): # waits for temp folder to be cleared
                 time.sleep(1)
             waiting=False
