@@ -49,7 +49,7 @@ def downloadPicture(url):
     temppath=os.path.join('data','temp','pic.jpg')
     datefolder=str(datetime.date.today())
     path=os.path.join('data','pictures',datefolder)
-    if not os.path.exists(path):os.mkdir(os.path.join('data','pictures',datefolder)) # creates folder named as the date to save pictures
+    if not os.path.exists(path):os.mkdir(path) # creates folder named as the date to save pictures
     name=url.split('/')[-1] # gets file extension
     fullpath=os.path.join(path,name).replace('png','jpg')
     r=requests.get(url,stream=True) # downloads picture
@@ -57,7 +57,7 @@ def downloadPicture(url):
         r.raw.decode_content=True
         with open(temppath,'wb') as f:
             shutil.copyfileobj(r.raw,f) # writes picture to file
-        Image.open(temppath).convert('RGB').save(fullpath) # copies picture to permanat folder
+        Image.open(temppath).convert('RGB').save(fullpath) # copies picture to permanent folder
         return temppath
     else:
         print('failure')
