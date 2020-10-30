@@ -1,13 +1,8 @@
 from instabot import Bot
-import os,requests,shutil,random,time,datetime,json
+import os,requests,shutil,random,time,datetime,json,configparser
 from PIL import Image,ImageFile
 
 ImageFile.LOAD_TRUNCATED_IMAGES=True
-
-subs=[]
-hashtags=[]
-shortestTime=60**2*4
-longestTime=60**2*6
 
 url='https://gateway.reddit.com/desktopapi/v1/subreddits/{}?rtj=only&redditWebClient=web2x&app=web2x-client-production&allow_over18=1&include=identity%2CstructuredStyles%2CprefsSubreddit&geo_filter=US_CA&layout=card'
 
@@ -29,9 +24,7 @@ headers={'authority': 'gateway.reddit.com',
 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.111 Safari/537.36'
 }
 
-tempfolder=os.path.join('data','temp')
-
-def getHot():
+def getHot(subs):
     """Grabs a list of meme data from a subreddit randomly picked from list subs"""
     choice=random.choice(subs) # picks random sub
     hoturl=url.format(choice) # formats url to request from
@@ -53,7 +46,7 @@ def getHot():
 def downloadPicture(url):
     """Downloads meme image and saves it to a permanent folder as well as temp folder so it can upload"""
     print('Downloading '+url)
-    temppath=os.path.join(tempfolder,'pic.jpg')
+    temppath=os.path.join('data','temp','pic.jpg')
     datefolder=str(datetime.date.today())
     path=os.path.join('data','pictures',datefolder)
     if not os.path.exists(path):os.mkdir(os.path.join('data','pictures',datefolder)) # creates folder named as the date to save pictures
@@ -69,9 +62,8 @@ def downloadPicture(url):
     else:
         print('failure')
 
-def generateHashtags():
+def generateHashtags(hashtags):
     """return list of hashtags in random order from list"""
-    hashtags=[]
     s=''
     choices=list(range(len(hashtags)))
     while choices:
@@ -108,6 +100,7 @@ def processMeme(meme):
 
 def cleanUp():
     """Clears temp folder"""
+    tempfolder=os.path.join('data','temp')
     if os.listdir(tempfolder):
         for file in os.listdir(tempfolder):
             os.remove(os.path.join(tempfolder,file)) # removes any files currently in the temp folder
@@ -134,22 +127,19 @@ def fixPicture(path):
             result.paste(im,(hx,hy)) # pastes rectangle behind picture
             result.save(path)
     
-def uploadMeme(path,caption):
+def uploadMeme(path,caption,hashtags,username,password):
     """Uploads meme to instagram"""
     if not os.path.exists(path):
         return # returns if picture isn't found
     print('Uploading . . .')
     bot=Bot()
-    bot.login(username='username',password='password') # logs into Instagram with api
-    caption+=generateHashtags() # adds hashtags to caption
+    bot.login(username=username,password=password) # logs into Instagram with api
+    caption+=generateHashtags(hashtags) # adds hashtags to caption
     info=bot.upload_photo(path,caption=caption) # uploads picture with caption
     if info:print('Picture uploaded')
 
 def setup():
     """If required files/folders don't exist, creates them"""
-    if not subs:
-        print('No subreddits are listed') # ends if subs is empty
-        raise SystemExit
     paths=['data',os.path.join('data','pictures'),os.path.join('data','temp')]
     for f in paths:
         if not os.path.exists(f):
@@ -162,7 +152,21 @@ def setup():
         file.write(str(os.getpid()))
     cleanUp()
 
-def wait():
+def loadConfig():
+    """Loads configuration file"""
+    config=configparser.ConfigParser()
+    config.read('Memebot.ini')
+    username=config['userinfo']['username']
+    password=config['userinfo']['password']
+    pref=config['preferences']
+    shortestTime,longestTime=int(pref['shortestTime']),int(pref['longestTime'])
+    hashtags,subs=pref['hashtags'].split(','),pref['subreddits'].split(',')
+    if not subs:
+        print('No subreddits are listed') # ends if subs is empty
+        raise SystemExit
+    return  username,password,shortestTime,longestTime,hashtags,subs
+
+def wait(shortestTime,longestTime):
     """Randomly wait before next post for between shortestTime to longestTime"""
     t=random.randrange(shortestTime,longestTime) # chooses random time between small and large
     now=datetime.datetime.now() # records time and date
@@ -179,14 +183,15 @@ def wait():
 def main():
     """Main method"""
     setup()
+    username,password,shortestTime,longestTime,hashtags,subs=loadConfig()
     while True:
         try: # Catches any errors, writes them to errors.txt, and waits 1 minute before trying again
-            memes=getHot()
+            memes=getHot(subs)
             meme=chooseMeme(memes)
             if not meme:continue # If no meme is returned, restarts process
             path,title=processMeme(meme)
-            uploadMeme(path,title)
-            wait()
+            uploadMeme(path,title,hashtags,username,password)
+            wait(shortestTime,longestTime)
         except Exception as e:
             with open('data/errors.txt','a') as file:
                 file.write(str(datetime.datetime.now())+'\n'+str(e)+'\n')
