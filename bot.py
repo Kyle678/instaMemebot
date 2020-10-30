@@ -130,7 +130,7 @@ def fixPicture(path):
             while x/y<.8:x+=1
             hx=round((x-ox)/2)
             hy=round((y-oy)/2)
-            result=Image.new(im.mode,(x,y),(0,0,0)) # Pads photo with black rectangles if aspect ration is changed
+            result=Image.new(im.mode,(x,y),(0,0,0)) # Pads photo with black rectangles if aspect ratio is changed
             result.paste(im,(hx,hy)) # pastes rectangle behind picture
             result.save(path)
     
