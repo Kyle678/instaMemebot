@@ -40,7 +40,7 @@ def filterMemes(memes,keywords):
     memes=[]
     for meme in noads:
         post=noads[meme]
-        if any(word in post['title'] for word in keywords): continue # filters out posts with any specified keyword in the title
+        if any(word in post['title'].lower() for word in keywords): continue # filters out posts with any specified keyword in the title
         if post['media'] and 'resolutions' in post['media'].keys: # checks for valid information
             newmeme={'id':post['id'],'comments':post['numComments'],'upvotes':post['score'],'title':post['title']} # creates dict for new meme
             url=post['media']['resolutions'][0]['url'].replace('preview','i')
