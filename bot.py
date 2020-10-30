@@ -150,7 +150,6 @@ def setup():
     if not subs:
         print('No subreddits are listed') # ends if subs is empty
         raise SystemExit
-    cleanUp()
     paths=['data',os.path.join('data','pictures'),os.path.join('data','temp')]
     for f in paths:
         if not os.path.exists(f):
@@ -161,6 +160,7 @@ def setup():
             file=open(f,'w');file.close()
     with open('data/pid.txt','w') as file:
         file.write(str(os.getpid()))
+    cleanUp()
 
 def wait():
     """Randomly wait before next post for between shortestTime to longestTime"""
