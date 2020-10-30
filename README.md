@@ -19,9 +19,10 @@ Log in to raspberry via ssh or open terminal on raspberry pi
 ```sh
 git clone https://github.com/Kyle678/instaMemebot.git
 ```
-2. Open Memebot.ini to configure Memebot
+2. Open Memebot.ini in the instaMemebot folder to configure Memebot
    - If on terminal
    ```sh
+   cd instaMemebot
    nano Memebot.ini
    ```
    - Under userinfo input your username and password
