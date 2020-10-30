@@ -37,8 +37,8 @@ def filterMemes(memes,keywords):
     """Filters out things like advertisements, videos, gifs, and any posts with specific keywords"""
     if keywords[0]=='None':keywords=[]
     notads=[x for x in memes['posts'].keys() if len(x)<12] # filters out ads
-    for m in js['posts'].keys():
-        post=js['posts'][m]
+    for m in memes['posts'].keys():
+        post=memes['posts'][m]
         if any(word in post['title'].lower().split(' ') for word in keywords):continue
         if post['media'] and 'resolutions' in post['media'].keys() and post['id'] in notads and 'reddit' not in post['title'].lower(): # checks for required info and filters out posts about reddit
             newmeme={'id':post['id'],'comments':post['numComments'],'upvotes':post['score'],'title':post['title']} # creates dict object for meme to post
