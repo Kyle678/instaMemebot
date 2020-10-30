@@ -56,7 +56,7 @@ def downloadPicture(url):
     temppath=os.path.join(tempfolder,'pic.jpg')
     datefolder=str(datetime.date.today())
     path=os.path.join('data','pictures',datefolder)
-    if not os.path.exists(path):os.mkdir(datefolder) # creates folder named as the date to save pictures
+    if not os.path.exists(path):os.mkdir(os.path.join('data','pictures',datefolder)) # creates folder named as the date to save pictures
     name=url.split('/')[-1] # gets file extension
     fullpath=os.path.join(path,name).replace('png','jpg')
     r=requests.get(url,stream=True) # downloads picture
@@ -171,7 +171,7 @@ def wait():
     with open(os.path.join('data','time.txt'),'w') as file:
         file.write(str(ne.time())) # writes time of next post to time.txt
     cleanUp()
-    print('Next meme schudled for '+str(ne))
+    print('Next meme scheduled for '+str(ne))
     while until.total_seconds()>0: # wait while time remaining is more than 0
         until=ne-datetime.datetime.now()
         time.sleep(.1)
