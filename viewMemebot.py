@@ -22,7 +22,14 @@ def main():
     """Display time of next post and time remaining"""
     if not os.path.exists('data'):
         print('Could not find folder "data". Make sure this is running in the correct directory and Memebot is running')
+        raise SystemExit
     os.chdir('data')
+    if getPid() and not os.path.exists('time.txt'):
+        while not isUploading():
+            pass
+        while isUploading():
+            os.system('clear')
+            print('Waiting for upload . . .')
     while True:
         while isUploading() and getPid() in processes():
             os.system('clear')
