@@ -12,6 +12,7 @@
 
 # Prerequisites
 - Raspberry Pi
+- Python 3.6+
 
 # How to set up Membot
 Log in to raspberry via ssh or open terminal on raspberry pi

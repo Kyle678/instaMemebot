@@ -50,11 +50,11 @@ def main():
             until=then-now # calculates time remaining
             while pid in processes() and until.seconds>0:
                 os.system('clear')
-                print(f'Next meme will upload at {rh}:%02d:%02d {label}'%(m,s))
+                print('Next meme will upload at %s:%02d:%02d %s'%(rh,m,s,label))
                 now=datetime.datetime.now() # updates current time
                 until=then-now # update time until next post
                 tr=until if until.days==0 else str(until)[str(until).rfind(' ')+1:] # removes '-1 days' if it exists
-                print(f'Time remaining: {tr}')
+                print('Time remaining: %s'%(tr))
                 time.sleep(.2)
             if pid not in processes():
                 print("Memebot doesn't seem to be running. Try restarting.")
