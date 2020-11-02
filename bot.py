@@ -57,7 +57,7 @@ def downloadPicture(url):
     path=os.path.join('data','pictures',datefolder)
     if not os.path.exists(path):os.mkdir(path) # creates folder named as the date to save pictures
     name=url.split('/')[-1] # gets file extension
-    fullpath=os.path.join(path,name).replace('png','jpg')
+    fullpath=os.path.join(path,name)
     r=requests.get(url,stream=True) # downloads picture
     if r.status_code==200:
         r.raw.decode_content=True
