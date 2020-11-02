@@ -61,9 +61,13 @@ def downloadPicture(url):
     r=requests.get(url,stream=True) # downloads picture
     if r.status_code==200:
         r.raw.decode_content=True
-        with open(temppath,'wb') as f:
+        with open(fullpath,'wb') as f:
             shutil.copyfileobj(r.raw,f) # writes picture to file
-        Image.open(temppath).convert('RGB').save(fullpath) # copies picture to permanent folder
+        im=Image.open(fullpath)
+        os.remove(fullpath)
+        im=im.convert('RGB')
+        im.save(fullpath.replace('png','jpg')) # copies picture to permanent folder
+        im.save(temppath)
         return temppath
     else:
         print('failure')
